@@ -1,0 +1,42 @@
+name: bookkeeping_app
+description: 记账App前端
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.17.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  dio: ^5.4.3+1
+  intl: ^0.20.2
+  fl_chart: ^1.0.0
+  table_calendar: ^3.1.1
+  shared_preferences: ^2.2.2
+  provider: ^6.1.2
+  flutter_secure_storage: ^9.2.4
+  path_provider: ^2.1.2
+  permission_handler: ^12.0.0+1
+  image_picker: ^1.0.7
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.9
+  url_launcher: ^6.2.5
+  package_info_plus: ^8.3.0
+  device_info_plus: ^11.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+  
+  # 修改后的 assets 部分（只保留目录声明，不要重复指定文件）
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/  # 加载整个目录，无需单独声明文件
