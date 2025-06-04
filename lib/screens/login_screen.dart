@@ -19,6 +19,22 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;  // 添加密码显示/隐藏状态变量
 
   @override
+  void initState() {
+    super.initState();
+    // 清空输入框内容
+    _usernameController.clear();
+    _passwordController.clear();
+  }
+
+  @override
+  void dispose() {
+    // 在 Widget 销毁时释放控制器资源
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(

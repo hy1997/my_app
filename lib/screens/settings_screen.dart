@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import 'category_management_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final int userId;
@@ -177,6 +178,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       await authProvider.logout();
       // Navigation is handled by the Consumer in main.dart
+      
+      // **** 移除导航到登录页并清除堆栈 ****
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()), // 跳转到登录页
+        (Route<dynamic> route) => false, // 移除所有之前的路由
+      );
+
     }
   }
 

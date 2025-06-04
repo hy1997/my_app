@@ -3,7 +3,7 @@ class EnvConfig {
   
   static String get apiBaseUrl {
     if (isDevelopment) {
-      return 'http://113.44.83.69/api';
+      return 'http://127.0.0.1:8080/api';
     } else {
       return 'https://api.yourdomain.com/api';  // 生产环境 API 地址
     }

@@ -58,6 +58,7 @@ class MyApp extends StatelessWidget {
       ],
       home: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
+          print('Consumer builder called, isAuthenticated: ${authProvider.isAuthenticated}');
           if (authProvider.isLoading) {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           } else if (authProvider.isAuthenticated) {
@@ -68,7 +69,12 @@ class MyApp extends StatelessWidget {
         },
       ),
       onGenerateRoute: (settings) {
-        if (settings.name == '/add-expense') {
+        if (settings.name == '/home') {
+          final args = settings.arguments as Map<String, dynamic>?;
+          return MaterialPageRoute(
+            builder: (context) => MainTabScreen(userId: args?['userId'], username: args?['username']),
+          );
+        } else if (settings.name == '/add-expense') {
           final args = settings.arguments as Map<String, dynamic>;
           return MaterialPageRoute(
             builder: (context) => AddExpenseScreen(
@@ -103,6 +109,9 @@ class MyApp extends StatelessWidget {
           }
         }
         return null;
+      },
+      routes: {
+        '/register': (context) => RegisterScreen(),
       },
     );
   }
