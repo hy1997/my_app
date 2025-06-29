@@ -62,41 +62,7 @@ class ApiService {
         print('Error Response: ${e.response?.data}');
         print('Error Status Code: ${e.response?.statusCode}');
         print('Error Request: ${e.requestOptions.uri}');
-        
-        // 如果是连接错误，尝试重试
-        if (e.type == DioExceptionType.connectionError ||
-            e.type == DioExceptionType.connectionTimeout ||
-            e.type == DioExceptionType.sendTimeout ||
-            e.type == DioExceptionType.receiveTimeout) {
-          
-          // 最多重试3次
-          int retryCount = 0;
-          while (retryCount < 3) {
-            try {
-              print('Retrying... Attempt ${retryCount + 1}');
-              final response = await _dio.request(
-                e.requestOptions.path,
-                data: e.requestOptions.data,
-                queryParameters: e.requestOptions.queryParameters,
-                options: Options(
-                  method: e.requestOptions.method,
-                  headers: e.requestOptions.headers,
-                ),
-              );
-              return handler.resolve(response);
-            } catch (retryError) {
-              retryCount++;
-              if (retryCount == 3) {
-          return handler.reject(DioException(
-            requestOptions: e.requestOptions,
-                  error: '网络连接失败，请检查网络设置',
-          ));
-              }
-              // 等待一段时间后重试
-              await Future.delayed(Duration(seconds: 1));
-            }
-          }
-        }
+
         
         if (e.error is SocketException) {
           print('Socket Error: ${e.error}');
