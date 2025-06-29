@@ -326,8 +326,7 @@ class HomeScreenState extends State<HomeScreen> {
             final boundUserTotalMonthFixed = boundUserMonthFixedTotalExcludingToday + boundUserTodayFixedTotal; // Use the variable
 
             // Add to total used amounts
-            totalTotalMonthlyUsed += boundUserTotalMonthlyUsed;
-            totalTotalDailyUsed += boundUserUsedToday; // Total non-fixed daily used
+             totalTotalDailyUsed += boundUserUsedToday; // Total non-fixed daily used
 
             // Store bound user's data
             boundUsersData.add({
@@ -534,8 +533,8 @@ class HomeScreenState extends State<HomeScreen> {
                                       children: [
                                           const Text('本月预算', style: TextStyle(fontWeight: FontWeight.bold)),
                                           const SizedBox(width: 12),
-                                          Text('总预算: ¥${myMonthlyBudget.toStringAsFixed(2)}', // 只显示我的本月总预算
-                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                                          Text('总预算: ¥${myMonthlyBudget.toStringAsFixed(2)}',
+                                              style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.black87)),
                                         ],
                                       ),
                                       const SizedBox(height: 8),
@@ -551,34 +550,7 @@ class HomeScreenState extends State<HomeScreen> {
                                       valueColor: AlwaysStoppedAnimation<Color>((myMonthlyBudget > 0 ? (myTotalMonthlyUsed / myMonthlyBudget) : 0.0) >= 1 ? Colors.red : Colors.green), // 根据我的总月度已用和预算确定颜色
                                     ),
                                       ),
-                                      const SizedBox(height: 8),
-                                      Container(
-                                        color: Colors.blue.withOpacity(0.05), // Subtle blue background for my data
-                                        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                                        child: Text('我的: 已用 ¥${myTotalMonthlyUsed.toStringAsFixed(2)}   剩余: ¥${(myMonthlyBudget - myTotalMonthlyUsed).toStringAsFixed(2)}', // 显示我的本月总已用和剩余
-                                          style: TextStyle(color: (myMonthlyBudget > 0 ? (myTotalMonthlyUsed / myMonthlyBudget) : 0.0) >= 1 ? Colors.red : Colors.black)),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      // 显示绑定人本月预算信息
-                                      // if (boundUsersData.isNotEmpty) // Check if there are bound users
-                                      //   Column(
-                                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                                      //     children: [
-                                      //       for (var boundUser in boundUsersData) // Iterate through bound users
-                                      //         Container(
-                                      //           color: Colors.grey.withOpacity(0.05), // Subtle grey background for bound user data
-                                      //           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                                      //           margin: const EdgeInsets.only(bottom: 4.0), // Add some space between bound users
-                                      //           child: Text(
-                                      //             '${boundUser['username'] ?? '绑定人'}: 已用 ¥${(boundUser['totalMonthlyUsed'] ?? 0.0).toStringAsFixed(2)}   剩余 ¥${(((boundUser['monthlyBudget'] ?? 0.0) as double) - ((boundUser['totalMonthlyUsed'] ?? 0.0) as double)).toStringAsFixed(2)}', // 显示绑定人本月总已用和剩余 (含固定支出)
-                                      //             style: TextStyle(
-                                      //               color: (((boundUser['totalMonthlyUsed'] ?? 0.0) as double) / ((boundUser['monthlyBudget'] ?? 0.0) == 0.0 ? 1.0 : ((boundUser['monthlyBudget'] ?? 0.0) as double))) >= 1 ? Colors.red : Colors.black // 根据绑定人总月度已用和预算确定颜色
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //     ],
-                                      //   ),
-                                      const SizedBox(height: 4),
+                                       const SizedBox(height: 4),
                                       Text(
                                         '''(含固定支出: ¥${myTotalMonthFixed.toStringAsFixed(2)} ）''' , // 显示我的和所有绑定人的总固定支出
                                         style: TextStyle(fontSize: 12, color: Colors.grey[600])),
