@@ -4,9 +4,9 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
     <application
-        android:label="my_app"
+        android:label="浪漫些许潦草"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/liaocao"
         android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
