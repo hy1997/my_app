@@ -252,30 +252,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           Divider(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('查看组合预算 (测试)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: fetchCombinedBudget,
-                  child: Text('获取组合预算'),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 48),
-                  ),
-                ),
-                if (_combinedBudgetInfo != null) ...[
-                  SizedBox(height: 16),
-                  Text('本月总预算: ¥${_combinedBudgetInfo!['monthlyBudget'] ?? 'N/A'}'),
-                  Text('每日总预算: ¥${_combinedBudgetInfo!['dailyBudget'] ?? 'N/A'}'),
-                  Text('固定支出总额: ¥${_combinedBudgetInfo!['fixedExpenses'] ?? 'N/A'}'),
-                ],
-              ],
-            ),
-          ),
-          Divider(),
           ListTile(
             leading: Icon(Icons.logout, color: Colors.red),
             title: Text('退出登录', style: TextStyle(color: Colors.red)),

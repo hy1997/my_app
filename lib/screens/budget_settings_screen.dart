@@ -155,21 +155,18 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
   }
 
   Future<void> _saveDailyBudgetForDateOrMonth() async {
-    final userId = widget.userId ?? 1;
+     final userId = widget.userId ?? 1;
     final value = double.tryParse(dailyBudgetForDateController.text) ?? 0;
     if (setForWholeMonth) {
       // 只设置当前选择日期所在月的每天预算
       final year = selectedCustomDay.year;
       final month = selectedCustomDay.month;
-      final daysInMonth = DateTime(year, month + 1, 0).day;
-      for (int day = 1; day <= daysInMonth; day++) {
-        final date = DateTime(year, month, day);
-        await ApiService().setDailyBudgetForDate(
-          userId,
-          DateFormat('yyyy-MM-dd').format(date),
-          value,
-        );
-      }
+      await ApiService().setDailyBudgetForDate(
+        userId,
+        DateFormat('yyyy-MM-dd').format(selectedCustomDay),
+        value,
+        true,
+       );
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${year}年${month}月每天预算已批量设置')));
     } else {
       // 只设置当前选中日期
@@ -177,7 +174,8 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
         userId,
         DateFormat('yyyy-MM-dd').format(selectedCustomDay),
         value,
-      );
+        false,
+       );
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('指定日期预算保存成功')));
     }
   }
@@ -283,4 +281,4 @@ class _BudgetSettingsScreenState extends State<BudgetSettingsScreen> {
             ),
     );
   }
-} 
+}

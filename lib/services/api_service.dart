@@ -330,13 +330,14 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> setDailyBudgetForDate(int userId, String date, double budget) async {
+  Future<Map<String, dynamic>> setDailyBudgetForDate(int userId, String date, double budget, bool setForWholeMonth ) async {
     try {
       final response = await _dio.post(ApiConfig.dailyBudget, data: {
         'userId': userId,
         'date': date,
         'budget': budget,
-      });
+        'setForWholeMonth':setForWholeMonth,
+       });
       return response.data;
     } catch (e) {
       throw Exception('设置指定日期预算失败: ${e.toString()}');

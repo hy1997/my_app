@@ -66,16 +66,16 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // 当应用恢复前台时刷新数据
-    if (state == AppLifecycleState.resumed) {
-      refreshData();
-    }
+    // if (state == AppLifecycleState.resumed) {
+    //   refreshData();
+    // }
   }
 
   // 每次页面显示时都刷新数据
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    refreshData();
+    // refreshData();
   }
 
   Future<void> _fetchCalendarData() async {
