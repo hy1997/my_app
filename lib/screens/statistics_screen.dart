@@ -50,19 +50,19 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
     super.initState();
     _selectedDay = DateTime.now();
     WidgetsBinding.instance.addObserver(this);
-    
+
     // 确保页面初始化时加载数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
       refreshData();
     });
   }
-  
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
-  
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // 当应用恢复前台时刷新数据
@@ -81,14 +81,13 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
   Future<void> _fetchCalendarData() async {
     final year = _focusedDay.year;
     final month = _focusedDay.month;
-    
+
     try {
       setState(() {
         _isCalendarLoading = true;
       });
-      
-      print('获取日历数据: ${year}-${month}');
-      final currentUserId = Provider.of<AuthProvider>(context, listen: false).userId;
+
+       final currentUserId = Provider.of<AuthProvider>(context, listen: false).userId;
       if (currentUserId == null) {
         print('未登录用户');
         return;
@@ -98,7 +97,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
         // 确保我们仍在同一个月
         if (_focusedDay.year == year && _focusedDay.month == month) {
           final days = List<Map<String, dynamic>>.from(resp['data']['days'] ?? []);
-          
+
           setState(() {
             _calendarDays = days;
             print('获取到日历数据: ${_calendarDays.length} 天 (${year}-${month})');
@@ -185,9 +184,9 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
 
   Future<void> _fetchDaySummary(DateTime day) async {
     if (day == null) return;
-    
+
     final dateStr = DateFormat('yyyy-MM-dd').format(day);
-    
+
     try {
       print('获取日汇总数据: $dateStr');
       final currentUserId = Provider.of<AuthProvider>(context, listen: false).userId;
@@ -197,12 +196,12 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
       }
       final resp = await ApiService().getDayStatistics(currentUserId, dateStr);
       print('日汇总响应数据: $resp');
-      
+
       // Increased robustness in checking the response structure
       if (resp != null && resp['success'] == true && resp.containsKey('data') && resp['data'] is Map<String, dynamic>) {
         final summary = resp['data'];
         print('设置日汇总数据: $summary');
-        
+
         setState(() {
           _selectedDaySummary = {
             'budget': summary['budget'] ?? 0.0,
@@ -253,7 +252,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
           _fetchDayBills(_selectedDay!),
           _fetchDaySummary(_selectedDay!),
         ]);
-        
+
         setState(() {
           _selectedDayStat = _calendarDays.firstWhere(
             (d) => d['date'] == DateFormat('yyyy-MM-dd').format(_selectedDay!),
@@ -295,7 +294,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(5),
         children: [
           Card(
             elevation: 2,
@@ -306,40 +305,67 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
                 children: [
                   Text('日历视图（预算/支出/余额）'),
                   const SizedBox(height: 8),
-                  _isCalendarLoading 
+                  _isCalendarLoading
                       ? Center(child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: CircularProgressIndicator(),
                         ))
                       : _buildCalendar(),
-                  if (_selectedDay != null)
-                    _buildDayExpenseDetails(),
-                  if (_selectedDay == null)
-                    Card(
-                      elevation: 2,
-                      margin: EdgeInsets.only(top: 16.0),
-                      child: Container(
-                        padding: EdgeInsets.all(24.0),
-                        alignment: Alignment.center,
-                        child: Column(
-                          children: [
-                            Icon(Icons.touch_app, size: 48, color: Colors.grey),
-                            SizedBox(height: 12),
-                            Text(
-                              '请点击日历中的日期查看支出明细',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
           ),
+          if(_selectedDay != null )
+          // 添加预算、支出、余额汇总卡片
+            Card(
+               child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _summaryItem(
+                        '今日预算',
+                        '¥${_selectedDaySummary?['budget']?.toStringAsFixed(2) ?? '0.00'}',
+                        Colors.blue
+                    ),
+                    _summaryItem(
+                        '今日支出',
+                        '¥${_selectedDaySummary?['spent']?.toStringAsFixed(2) ?? '0.00'}',
+                        Colors.red
+                    ),
+                    _summaryItem(
+                        '余额',
+                        '¥${_selectedDaySummary?['remain']?.toStringAsFixed(2) ?? '0.00'}',
+                        (_selectedDaySummary?['remain'] ?? 0) < 0 ? Colors.red : Colors.green
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (_selectedDay != null)
+            _buildDayExpenseDetails(),
+          if (_selectedDay == null)
+            Card(
+              elevation: 2,
+              margin: EdgeInsets.only(top: 16.0),
+              child: Container(
+                padding: EdgeInsets.all(24.0),
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    Icon(Icons.touch_app, size: 48, color: Colors.grey),
+                    SizedBox(height: 12),
+                    Text(
+                      '请点击日历中的日期查看支出明细',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -354,7 +380,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
                     lastDay: DateTime(2100),
                     calendarFormat: CalendarFormat.month,
                     selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-      rowHeight: 110,
+      rowHeight: 80,
       daysOfWeekHeight: 20,
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
@@ -382,13 +408,13 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
                       setState(() {
                         _selectedDay = selectedDay;
                         _focusedDay = focusedDay;
-          
+
                         _selectedDayStat = _calendarDays.firstWhere(
                           (d) => d['date'] == DateFormat('yyyy-MM-dd').format(selectedDay),
                           orElse: () => {},
                         );
                       });
-        
+
         // 获取选定日期的数据
                       _fetchDayBills(selectedDay);
                       _fetchDaySummary(selectedDay);
@@ -406,13 +432,13 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
       (d) => d['date'] == dayStr,
                           orElse: () => {},
                         );
-    
+
     return Container(
       margin: EdgeInsets.all(1),
       padding: EdgeInsets.symmetric(vertical: 2),
       decoration: BoxDecoration(
-        color: stat.isNotEmpty ? 
-          ((stat['remain'] ?? 0) < 0 ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.05)) 
+        color: stat.isNotEmpty ?
+          ((stat['remain'] ?? 0) < 0 ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.05))
           : null,
         borderRadius: BorderRadius.circular(4),
       ),
@@ -422,7 +448,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
         crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
           Text('${day.day}', style: TextStyle(
-            fontSize: 12, 
+            fontSize: 12,
             fontWeight: FontWeight.bold,
             color: day.month == _focusedDay.month ? Colors.black : Colors.grey,
           )),
@@ -465,15 +491,15 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
               margin: EdgeInsets.symmetric(horizontal: 2),
               padding: EdgeInsets.symmetric(vertical: 1),
               decoration: BoxDecoration(
-                color: (stat['remain'] ?? 0) < 0 
-                  ? Colors.red.withOpacity(0.1) 
+                color: (stat['remain'] ?? 0) < 0
+                  ? Colors.red.withOpacity(0.1)
                   : Colors.green.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(2),
                                     ),
               child: Text(
                 '余:${stat['remain'] != null ? '￥${stat['remain']}' : '-'}',
                 style: TextStyle(
-                  fontSize: 7, 
+                  fontSize: 7,
                   fontWeight: FontWeight.bold,
                   color: (stat['remain'] ?? 0) < 0 ? Colors.red : Colors.green
                                 ),
@@ -489,10 +515,8 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
 
   // 构建支出明细卡片
   Widget _buildDayExpenseDetails() {
-    print('统计页: 构建日支出明细卡片, 账单数量: ${_selectedDayBills.length}');
-    return Card(
-      elevation: 2,
-      margin: EdgeInsets.only(top: 16.0),
+     return
+      Card(margin: EdgeInsets.only(top: 16.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -502,51 +526,21 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${DateFormat('yyyy-MM-dd').format(_selectedDay!)} 支出明细', 
+                Text('${DateFormat('yyyy-MM-dd').format(_selectedDay!)} 支出明细',
                   style: TextStyle(
-                    fontSize: 16, 
+                    fontSize: 16,
                     fontWeight: FontWeight.bold
                   )
                 ),
                 if (_isBillsLoading)
                   SizedBox(
-                    width: 16, 
-                    height: 16, 
+                    width: 16,
+                    height: 16,
                     child: CircularProgressIndicator(strokeWidth: 2)
                   ),
               ],
             ),
-            SizedBox(height: 12),
-            
-            // 添加预算、支出、余额汇总卡片
-            Card(
-              elevation: 1,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _summaryItem(
-                      '今日预算',
-                      '¥${_selectedDaySummary?['budget']?.toStringAsFixed(2) ?? '0.00'}',
-                      Colors.blue
-                    ),
-                    _summaryItem(
-                      '今日支出',
-                      '¥${_selectedDaySummary?['spent']?.toStringAsFixed(2) ?? '0.00'}',
-                      Colors.red
-                    ),
-                    _summaryItem(
-                      '余额',
-                      '¥${_selectedDaySummary?['remain']?.toStringAsFixed(2) ?? '0.00'}',
-                      (_selectedDaySummary?['remain'] ?? 0) < 0 ? Colors.red : Colors.green
-                    ),
-                  ],
-                ),
-              ),
-            ),
             SizedBox(height: 16),
-            
             // 支出明细列表
             if (!_isBillsLoading && _selectedDayBills.isEmpty)
               Padding(
@@ -559,8 +553,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
                   // Check if isFixed exists and is explicitly true
                   final isFixed = bill['isFixed'];
                   final shouldInclude = !(isFixed is bool && isFixed == true);
-                  print('统计页: 过滤账单 ID=${bill['id']}, isFixed=$isFixed, shouldInclude=$shouldInclude');
-                  return shouldInclude;
+                   return shouldInclude;
                 })
                 .map((bill) => ListTile(
                   contentPadding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0),
@@ -636,7 +629,7 @@ class StatisticsScreenState extends State<StatisticsScreen> with WidgetsBindingO
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('合计: ¥${_calculateNonFixedDailyTotal().toStringAsFixed(2)}', 
+                    Text('合计: ¥${_calculateNonFixedDailyTotal().toStringAsFixed(2)}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

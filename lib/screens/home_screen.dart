@@ -490,7 +490,7 @@ class HomeScreenState extends State<HomeScreen> {
 
                   final dailyPercent = totalDailyBudget > 0 ? (totalTotalDailyUsed / totalDailyBudget).clamp(0.0, 1.0) : 0.0;
                   final monthPercent = totalMonthlyBudget > 0 ? (totalTotalMonthlyUsed / totalMonthlyBudget).clamp(0.0, 1.0) : 0.0;
-                  final displayUsername = data['user']?['username'] ?? username ?? '用户';
+                  final displayUsername = data['user']?['username'] ?? username ?? '重新登陆！';
 
                   return ListView(
                     children: [
@@ -500,7 +500,7 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                                const Text('记账', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                                const Text('轻记', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                               Row(
                                 children: [
                                     Text('用户名：$displayUsername', style: const TextStyle(fontSize: 16)),
